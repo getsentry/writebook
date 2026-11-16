@@ -6,7 +6,11 @@ announce() {
 }
 
 announce "Installing Ruby"
-mise install
+if command -v mise >/dev/null; then
+  mise install
+else
+  echo "mise isn't installed; using the Ruby on PATH"
+fi
 
 announce "Installing dependencies"
 gem install bundler --conservative
@@ -14,13 +18,13 @@ bundle check || bundle install
 
 announce "Preparing database"
 if [[ $* == *--reset* ]]; then
-  rails db:reset
+  bin/rails db:reset
 else
-  rails db:prepare
+  bin/rails db:prepare
 fi
 
 announce "Removing old logs and tempfiles"
-rails log:clear tmp:clear
+bin/rails log:clear tmp:clear
 
 echo
 echo "Start developing with bin/dev"
